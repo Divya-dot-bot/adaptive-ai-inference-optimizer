@@ -1,228 +1,232 @@
 # Adaptive AI Inference Optimizer
 
-A simulation-based research project that investigates how different autoscaling and infrastructure provisioning strategies affect the cost, latency, throughput, and SLA performance of an AI inference-serving system under changing workloads.
+# Adaptive AI Inference Optimizer
 
-> **Important:** This project uses synthetically generated workloads. It does not use external datasets, cloud infrastructure, or real production traffic data. All infrastructure behavior and experimental results are simulated locally unless explicitly stated otherwise.
+> **A simulation framework for evaluating adaptive autoscaling strategies for AI inference workloads.**
 
-## Project Goals
+## Overview
 
-The project simulates an AI inference-serving system where incoming requests change over time.
+Adaptive AI Inference Optimizer simulates changing AI inference workloads and dynamically evaluates how different autoscaling strategies decide the number of computing instances required to serve those workloads.
 
-The system will:
+The project compares four approaches:
 
-* Generate realistic and reproducible synthetic AI inference workloads.
-* Model baseline traffic, daily patterns, weekly patterns, peak hours, random noise, traffic spikes, and sudden workload surges.
-* Forecast future inference workload.
-* Simulate AI inference-serving infrastructure locally.
-* Compare multiple autoscaling strategies.
-* Optimize the trade-off between infrastructure cost, latency, throughput, and SLA violations.
-* Simulate on-demand, spot-instance, and hybrid provisioning strategies.
-* Run reproducible experiments under different workload conditions.
+* **Static Scaling**
+* **Reactive Scaling**
+* **Forecast-Based Scaling**
+* **Optimization-Based Scaling**
 
-## Research Question
+The strategies are evaluated using metrics including cost, latency, throughput, active instances, queue behavior, and SLA-related performance.
 
-> To what extent can forecast-based and optimization-based autoscaling reduce the simulated infrastructure cost of an AI inference-serving system while maintaining throughput and meeting predefined latency and SLA requirements, compared with static and reactive autoscaling, under changing synthetic workloads and simulated spot-instance interruptions?
+The project uses synthetic workload generation and simulation to provide a controlled research framework for studying more cost-efficient AI inference infrastructure.
 
-## Autoscaling Strategies
+---
 
-The project will compare:
+## Problem Statement
 
-1. **Static Provisioning**
-   A fixed number of instances remains active regardless of workload changes.
+AI inference workloads can change significantly over time. A fixed number of computing instances may waste resources during low-demand periods or cause high latency and SLA violations during traffic spikes.
 
-2. **Reactive Autoscaling**
-   Infrastructure scales based on current system metrics such as utilization or queue length.
+Reactive autoscaling can respond after workload changes occur, but delayed responses may still affect performance. Forecast-based and optimization-based approaches aim to make more informed scaling decisions by anticipating workload behavior and considering multiple operational trade-offs.
 
-3. **Forecast-Based Autoscaling**
-   Future workload predictions are used to proactively determine infrastructure capacity.
+This project investigates:
 
-4. **Optimization-Based Autoscaling**
-   The number of active instances is selected by minimizing an objective that balances cost, SLA violations, and excessive latency.
+> **How do static, reactive, forecast-based, and optimization-based autoscaling strategies compare under changing AI inference workloads in terms of cost, latency, throughput, and SLA-related performance?**
 
-## Forecasting Approaches
+---
 
-The project will compare:
-
-1. Naive baseline forecasting.
-2. Moving-average forecasting.
-3. Machine learning forecasting using lag and time-based features.
-4. An optional lightweight deep learning model only if experimentally justified and practical.
-
-Forecasting performance will be evaluated using:
-
-* MAE
-* RMSE
-* MAPE, where appropriate
-
-## Simulation Metrics
-
-The infrastructure simulator and experiments will measure:
-
-* Total simulated infrastructure cost
-* Average latency
-* p95 latency, where practical
-* Throughput
-* Queue length
-* Active instances
-* SLA violations
-* Forecasting error
-* Infrastructure utilization
-* Spot interruption and recovery effects
-
-## Synthetic Workload
-
-No external dataset is required.
-
-All workload data is generated locally by the project using configurable synthetic patterns, including:
-
-* Normal baseline traffic
-* Daily seasonality
-* Weekly seasonality
-* Peak-hour behavior
-* Random noise
-* Random traffic spikes
-* Sudden workload surges
-* Changing traffic intensity
-* Optional AI model types with different simulated inference costs
-
-A fixed random seed can be used to reproduce experiments.
-
-> Synthetic workloads represent simulated experimental conditions and must not be interpreted as real production AI traffic.
-
-## Project Architecture
+## System Architecture
 
 ```text
-Synthetic Workload Generator
-            ↓
-Historical Workload Data
-            ↓
-Forecasting Models
-            ↓
-Inference Infrastructure Simulator
-            ↓
-Autoscaling Decision Engine
-            ↓
-Optimization Module
-            ↓
-Performance Evaluation
-            ↓
-Results and Visualization
+                    Synthetic Workload Generator
+                              │
+                              ▼
+                    AI Inference Workload Stream
+                              │
+              ┌───────────────┼───────────────┐
+              ▼               ▼               ▼
+        Static Scaling   Reactive Scaling   Forecasting
+              │               │               │
+              │               │               ▼
+              │               │       Forecast-Based Scaling
+              │               │               │
+              └───────────────┼───────────────┘
+                              │
+                              ▼
+                   Optimization-Based Scaling
+                              │
+                              ▼
+                     Inference Simulation
+                              │
+                              ▼
+              Evaluation and Metrics Collection
+                              │
+                              ▼
+              Cost • Latency • Throughput • SLA
+                              │
+                              ▼
+                    Results and Visualization
 ```
 
-## Planned Project Structure
+---
+
+## Implemented Autoscaling Strategies
+
+### 1. Static Scaling
+
+Maintains a fixed number of computing instances regardless of workload changes. It serves as a baseline for comparing adaptive approaches.
+
+### 2. Reactive Scaling
+
+Adjusts the number of instances in response to observed workload or system conditions.
+
+### 3. Forecast-Based Scaling
+
+Uses workload forecasting to estimate future demand and make scaling decisions before or during anticipated workload changes.
+
+### 4. Optimization-Based Scaling
+
+Uses an optimization approach to select scaling decisions while considering operational trade-offs such as resource cost and service performance.
+
+---
+
+## Evaluation Metrics
+
+The simulation evaluates strategies using relevant metrics such as:
+
+* **Infrastructure Cost**
+* **Latency**
+* **Throughput**
+* **Active Instances**
+* **Queue Behavior**
+* **SLA Violations / SLA-Related Performance**
+
+The results allow the behavior of each strategy to be compared under changing synthetic workloads.
+
+---
+
+## Project Workflow
 
 ```text
-adaptive-inference-optimizer/
+Generate Synthetic Workload
+          ↓
+Simulate AI Inference Demand
+          ↓
+Run Autoscaling Strategy
+          ↓
+Determine Required Instances
+          ↓
+Simulate System Performance
+          ↓
+Collect Cost and Performance Metrics
+          ↓
+Compare Strategies
+          ↓
+Generate Results and Visualizations
+```
+
+---
+
+## Project Structure
+
+```text
+adaptive-ai-inference-optimizer/
 │
-├── data/
-│   └── generated/
-│       ├── workloads/
-│       └── metadata/
+├── static.py                  # Static autoscaling strategy
+├── reactive.py                # Reactive autoscaling strategy
+├── forecast_based.py          # Forecast-based strategy
+├── optimization_based.py      # Optimization-based strategy
 │
-├── notebooks/
+├── forecasting_pipeline.py    # Workload forecasting pipeline
+├── optimizer.py               # Optimization logic
+├── evaluation.py              # Evaluation and metric calculation
 │
-├── src/
-│   ├── workload/
-│   ├── forecasting/
-│   ├── simulation/
-│   ├── autoscaling/
-│   ├── optimization/
-│   ├── spot/
-│   ├── evaluation/
-│   ├── visualization/
-│   └── utils/
+├── tests/                     # Automated tests
+├── results/                   # Experiment outputs and results
 │
-├── configs/
-├── results/
-│   ├── figures/
-│   ├── tables/
-│   ├── metrics/
-│   └── experiment_logs/
-│
-├── tests/
-├── app/
-├── docs/
-│
-├── requirements.txt
-├── .gitignore
 └── README.md
 ```
 
-## Local-Only Design
+> Update this structure if any filenames or directories differ from your current repository.
 
-This project is designed to run completely on a local laptop.
+---
 
-It does not require:
+## Research Context
 
-* AWS
-* GCP
-* Azure
-* Cloud accounts
-* Paid APIs
-* Kubernetes
-* Distributed infrastructure
-* External datasets
+This implementation supports research into adaptive resource management for AI inference systems.
 
-Infrastructure behavior is modeled through a local Python simulation.
+The project explores the trade-offs between simple fixed-capacity provisioning and increasingly adaptive approaches based on observed workload behavior, demand forecasting, and optimization.
 
-## Reproducibility
+The simulation-based design enables controlled experiments and comparison across multiple workload conditions without requiring access to a large production inference cluster.
 
-Experiments will use:
+---
 
-* Configurable random seeds
-* Version-controlled source code
-* Saved configuration files
-* Locally generated datasets
-* Documented simulation assumptions
-* Controlled experimental scenarios
+## Research Paper
 
-The same configuration and random seed should produce reproducible synthetic workloads and experimental conditions.
+This project is associated with the research work:
 
-## Research Integrity
+**Forecast-Driven, Spot-Instance-Aware Autoscaling for Cost-Efficient AI Inference Serving on Commodity Cloud**
 
-This is a **simulation-based research project**.
+A public record of the research is available through its DOI:
 
-The project distinguishes between:
+**DOI: 10.5281/zenodo.22283568**
 
-### Simulated assumptions
+> The work should be described according to its actual publication status. A DOI/public repository record should not be described as a peer-reviewed journal or conference publication unless it was formally peer reviewed and accepted.
 
-Examples include:
+---
 
-* Instance capacity
-* Infrastructure pricing
-* Latency model parameters
-* SLA thresholds
-* Spot interruption probabilities
+## Technologies and Concepts
 
-### Synthetic data
+* Python
+* Machine Learning
+* Workload Forecasting
+* Optimization
+* Cloud Resource Management
+* AI Inference Systems
+* Simulation
+* Data Analysis
+* Automated Testing
 
-Workload data generated locally by the project's workload generator.
+---
 
-### Experimental results
+## Current Status
 
-Metrics actually produced by running experiments using the implemented simulator.
+**Working research project.**
 
-The project will not present simulated results as measurements from a real production system.
+The repository includes implementations for multiple autoscaling strategies, workload forecasting and optimization components, evaluation logic, automated tests, and experiment results.
 
-## Development Status
+Future work focuses on improving the simulation realism, expanding workload scenarios, and evaluating additional scaling strategies.
 
-The project is currently under development.
+---
 
-### Planned phases
+## Future Work
 
-* [x] Phase 1: Environment and project foundation
-* [ ] Phase 2: Synthetic workload generator
-* [ ] Phase 3: Workload analysis and scenario validation
-* [ ] Phase 4: Baseline forecasting
-* [ ] Phase 5: Machine learning forecasting
-* [ ] Phase 6: Inference infrastructure simulator
-* [ ] Phase 7: Static and reactive autoscaling
-* [ ] Phase 8: Forecast-based autoscaling
-* [ ] Phase 9: Optimization-based autoscaling
-* [ ] Phase 10: Spot-instance and hybrid simulation
-* [ ] Phase 11: Controlled experiments and evaluation
-* [ ] Phase 12: Results and visualization
-* [ ] Phase 13: Documentation and GitHub preparation
+Potential extensions include:
+
+* Real cloud deployment experiments.
+* Integration with live inference-serving frameworks.
+* More realistic workload traces.
+* Spot-instance interruption modeling.
+* Additional forecasting models.
+* Reinforcement-learning-based autoscaling.
+* Multi-region or multi-cloud resource allocation.
+* Expanded optimization objectives.
+* Larger-scale benchmarking.
+
+---
+
+## Limitations
+
+This project is primarily a simulation and research framework.
+
+* Results depend on the assumptions used in the workload and infrastructure simulation.
+* Synthetic workloads cannot capture every characteristic of production AI systems.
+* Simulation results should not automatically be interpreted as guaranteed performance in a real cloud deployment.
+* Real-world validation would require deployment experiments and production-scale measurements.
+
+---
+
+## License
+
+This project is intended for research, educational, and development purposes. See the repository license for details.
 
 ## License
 
